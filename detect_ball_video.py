@@ -22,27 +22,8 @@ while True:
             cv.circle(frame, (i[0], i[1]), 1, (0,100,100), 3)
             cv.circle(frame, (i[0], i[1]), i[2], (255, 0, 255), 3)
 
-    # cv.circle(frame, (circles[0,0], circles[0,1]), 1, (0,100,100), 3)
-    # cv.circle(frame, (circles[0,0], circles[0,1]), circles[0,2], (255, 0, 255), 3)
-
-    # chosen = None
-    # if circles is not None:
-    #     circles = np.uint32(np.around(circles))
-    #     for i in circles[0, :]:
-    #         if chosen is None: chosen = i
-    #         if prevCircle is not None:
-    #             if dist(chosen[0], chosen[1], prevCircle[0], prevCircle[1]) <= dist(i[0], i[1], prevCircle[0], prevCircle[1]):
-    #                 chosen = i
-
-    # cv.circle(frame, (chosen[0], chosen[1]), 1, (0,100,100), 3)
-    # cv.circle(frame, (chosen[0], chosen[1]), chosen[2], (255, 0, 255), 3)
-
-    # prevCircle = chosen
-
     cv.imshow("circles", frame)
     if cv.waitKey(1) & 0xFF == ord('q'): break
 
 videoCapture.release()
 cv.destroyAllWindows()
-
-# elliptical transform
