@@ -31,9 +31,26 @@ while True:
         # normal pink is about BGR: 193, 182, 255
         # I think it could be good to say if the colors r within either a certain range or
         # percentage of the range, they r good to be the ball
+        frame_hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
+        lower_pink = np.array([140, 50, 50])   # Lower bound for pink color in HSV
+        upper_pink = np.array([170, 255, 255])  # Upper bound for pink color in HSV
+        pink_mask = cv.inRange(frame_hsv, lower_pink, upper_pink)
 
-        circles = np.uint32(np.around(circles))
-        cv.circle(frame, (circles[0,0,0], circles[0,0,1]), circles[0,0,2], (255, 0, 255), 3)
+        # maybe
+        kernel = np.ones((5, 5), np.uint8)
+        pink_mask = cv.erode(pink_mask, kernel, iterations=1)
+        pink_mask = cv.dilate(pink_mask, kernel, iterations=1)
+
+        contours, _ = cv.findContours(pink_mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+        x, y = circles[0,0,0], circles[0,0,1]
+        for contour in contours:
+            if cv.pointPolygonTest(contour, (x, y), False) >= 0:
+                print(f"Pixel at ({x}, {y}) is pink.")
+                circles = np.uint32(np.around(circles))
+                cv.circle(frame, (circles[0,0,0], circles[0,0,1]), circles[0,0,2], (255, 0, 255), 3)
+                break
+            else:
+                print(f"Pixel at ({x}, {y}) is not pink.")
 
     # out_video.write(frame)
     cv.imshow("frame with circles", frame)
