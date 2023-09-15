@@ -22,8 +22,10 @@ while True:
     ret, frame = video.read()
     if not ret: break
 
-    grayFrame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-    blurFrame = cv.GaussianBlur(grayFrame, (17,17), 0)
+    frame_hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
+    pink_mask = cv.inRange(frame_hsv, lower_pink, upper_pink)
+
+    blurFrame = cv.GaussianBlur(pink_mask, (17,17), 0)
 
     # circles = cv.HoughCircles(blurFrame, cv.HOUGH_GRADIENT, 1.4, 5000, 
     #                         param1=100, param2=35, minRadius=0, maxRadius=200)
@@ -31,29 +33,12 @@ while True:
                             param1=140, param2=30, minRadius=0, maxRadius=250)
     
     if circles is not None:
-        frame_hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
         circles = np.uint32(np.around(circles))
-
         for i in circles[0,:]:
             x, y, r = i[0], i[1], i[2]
-            # cv.circle(frame, (x, y), r, (0, 255, 0), 3)
-            factor = 0.6
-            top = int(y - factor*r)
-            bot = int(y + factor*r)
-            left = int(x - factor*r)
-            right = int(x + factor*r)
+            cv.circle(frame, (x, y), r, (0, 255, 0), 3)
 
-            if top < 0 or left < 0 or bot > frame_height or right > frame_width:
-                continue
-
-            circle_subset_of_frame = frame_hsv[top:bot, left:right, :]
-            pink_mask = cv.inRange(circle_subset_of_frame, lower_pink, upper_pink)
-
-            percent_pink = np.sum(pink_mask) /255 / pink_mask.size
-            pink_threshold = 0.75
-
-            if percent_pink >= pink_threshold:
-                cv.circle(frame, (x, y), r, (0, 255, 0), 3)
+        
 
     # out_video.write(frame)
     # cv.imshow("frame with circle", frame)
