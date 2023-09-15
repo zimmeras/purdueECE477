@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 import time
 
-lower_pink = np.array([120, 50, 50])   # Lower bound for pink color in HSV
+lower_pink = np.array([140, 150, 50])   # Lower bound for pink color in HSV
 upper_pink = np.array([170, 255, 255])  # Upper bound for pink color in HSV
 
 video = cv.VideoCapture("pink_ball.mov")
@@ -13,9 +13,7 @@ begin = time.time()
 frame_width = int(video.get(3))
 frame_height = int(video.get(4))
 size = (frame_width, frame_height)
-# out_video = cv.VideoWriter('ball60fps_detected.mp4', 
-#                          cv.VideoWriter_fourcc(*'mp4'),
-#                          60, size)
+out_video = cv.VideoWriter('pink_ball2.mp4', cv.VideoWriter_fourcc(*'mp4v'), 60, size)
 
 while True:
     start = time.time()
@@ -29,7 +27,7 @@ while True:
 
     # circles = cv.HoughCircles(blurFrame, cv.HOUGH_GRADIENT, 1.4, 5000, 
     #                         param1=100, param2=35, minRadius=0, maxRadius=200)
-    circles = cv.HoughCircles(blurFrame, cv.HOUGH_GRADIENT, 1.4, 50, 
+    circles = cv.HoughCircles(blurFrame, cv.HOUGH_GRADIENT, 1.4, 100, 
                             param1=140, param2=30, minRadius=0, maxRadius=250)
     
     if circles is not None:
@@ -38,11 +36,9 @@ while True:
             x, y, r = i[0], i[1], i[2]
             cv.circle(frame, (x, y), r, (0, 255, 0), 3)
 
-        
-
-    # out_video.write(frame)
-    # cv.imshow("frame with circle", frame)
-    # if cv.waitKey(1) & 0xFF == ord('q'): break
+    out_video.write(frame)
+    cv.imshow("frame with circle", frame)
+    if cv.waitKey(1) & 0xFF == ord('q'): break
     
     end = time.time()
     times.append(end - start)
@@ -54,6 +50,6 @@ print(f"FPS: {fps}")
 end = time.time()
 print(f"Video took: {end-begin} s")
 
-# video.release()
-# out_video.release()
+video.release()
+out_video.release()
 cv.destroyAllWindows()
