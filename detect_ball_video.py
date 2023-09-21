@@ -2,10 +2,10 @@ import cv2 as cv
 import numpy as np
 import time
 
-lower_pink = np.array([140, 150, 30])   # Lower bound for pink color in HSV
+lower_pink = np.array([140, 130, 0])   # Lower bound for pink color in HSV
 upper_pink = np.array([170, 255, 255])  # Upper bound for pink color in HSV
 
-video = cv.VideoCapture("ball_hub.mov")
+video = cv.VideoCapture("pink_ball.mov")
 
 times = []
 begin = time.time()
@@ -29,7 +29,7 @@ while True:
 
     # circles = cv.HoughCircles(blurFrame, cv.HOUGH_GRADIENT, 1.4, 5000, 
     #                         param1=100, param2=35, minRadius=0, maxRadius=200)
-    circles = cv.HoughCircles(blurFrame, cv.HOUGH_GRADIENT, 1.4, 100, 
+    circles = cv.HoughCircles(blurFrame, cv.HOUGH_GRADIENT, 1.4, 5000, 
                             param1=140, param2=30, minRadius=0, maxRadius=250)
     
     if circles is not None:

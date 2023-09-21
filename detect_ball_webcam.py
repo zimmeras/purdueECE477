@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 import time
 
-lower_pink = np.array([140, 150, 30])   # Lower bound for pink color in HSV
+lower_pink = np.array([140, 130, 0])   # Lower bound for pink color in HSV
 upper_pink = np.array([170, 255, 255])  # Upper bound for pink color in HSV
 
 video = cv.VideoCapture(0)
