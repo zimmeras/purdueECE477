@@ -27,7 +27,12 @@ begin = time.time()
 # size = (frame_width, frame_height)
 # out_video = cv.VideoWriter('pink_ball2.mp4', cv.VideoWriter_fourcc(*'mp4v'), 60, size)
 
+n = 0
 while True:
+    n += 1
+    if n != 60: continue
+    n = 0
+
     start = time.time()
     ret, frame = video.read()
     if not ret: break
