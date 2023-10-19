@@ -15,6 +15,8 @@ begin = time.time()
 # size = (frame_width, frame_height)
 # out_video = cv.VideoWriter('pink_ball2.mp4', cv.VideoWriter_fourcc(*'mp4v'), 60, size)
 
+# file = open("ball_pos_data.txt", 'w')
+
 while True:
     start = time.time()
     ret, frame = video.read()
@@ -22,27 +24,31 @@ while True:
 
     frame_hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
     pink_mask = cv.inRange(frame_hsv, lower_pink, upper_pink)
-    # cv.imshow("frame with circle", pink_mask)
-    # cv.waitKey()
 
     blurFrame = cv.GaussianBlur(pink_mask, (17,17), 0)
 
-    # circles = cv.HoughCircles(blurFrame, cv.HOUGH_GRADIENT, 1.4, 5000, 
-    #                         param1=100, param2=35, minRadius=0, maxRadius=200)
     circles = cv.HoughCircles(blurFrame, cv.HOUGH_GRADIENT, 1.4, 5000, 
                             param1=140, param2=30, minRadius=0, maxRadius=250)
     
     if circles is not None:
         circles = np.uint32(np.around(circles))
-        for i in circles[0,:]:
-            cv.circle(frame, (i[0], i[1]), i[2], (0, 255, 0), 3)
+        # cv.circle(frame, (circles[0,0,0], circles[0,0,1]), circles[0,0,2], (0, 255, 0), 3)
+        x, y, r = circles[0,0,0], circles[0,0,1], circles[0,0,2]
+
+    #     # code to send ball position data to catch ball
+    #     file.write(f"{x}, {y}, {r}\n")
+    # else:
+    #     file.write(f"-1, -1, -1\n")
+    
 
     # out_video.write(frame)
-    cv.imshow("frame with circle", frame)
-    if cv.waitKey(1) & 0xFF == ord('q'): break
+    # cv.imshow("frame with circle", frame)
+    # if cv.waitKey(1) & 0xFF == ord('q'): break
     
     end = time.time()
     times.append(end - start)
+
+# file.close()
 
 avg = np.mean(times)
 fps = 1 / avg
