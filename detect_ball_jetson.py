@@ -2,21 +2,38 @@ import cv2 as cv
 import numpy as np
 import time 
 
+# this works with the raspberry pi camera but no the wide angle camera
+# pipeline = (
+#         "nvarguscamerasrc sensor_id=1 ! "
+#         "video/x-raw(memory:NVMM), width=(int)1280, height=(int)720, format=(string)NV12, framerate=(fraction)120/1 ! "
+#         "nvvidconv flip-method=0 ! "
+#         "video/x-raw, width=(int)1280, height=(int)720, format=(string)BGRx ! "
+#         "videoconvert ! "
+#         "video/x-raw, format=(string)BGR ! "
+#         "appsink sync=false"
+# )
+
+# video = cv.VideoCapture(pipeline, cv.CAP_GSTREAMER)
+
+# sudo service nvargus-daemon restart
+# dmesg | grep imx
 pipeline = (
-        "nvarguscamerasrc ! "
-        "video/x-raw(memory:NVMM), width=(int)1280, height=(int)720, format=(string)NV12, framerate=(fraction)60/1 ! "
-        "nvvidconv flip-method=2 ! "
-        "video/x-raw, width=(int)1280, height=(int)720, format=(string)BGRx ! "
+        "nvarguscamerasrc sensor_id=0 ! nvoverlaysink"
+        "video/x-raw(memory:NVMM), width=(int)1920, height=(int)1080, format=(string)NV12, framerate=(fraction)30/1 ! "
+        "nvvidconv ! "
+        "video/x-raw, format=(string)BGRx ! "
         "videoconvert ! "
         "video/x-raw, format=(string)BGR ! "
         "appsink"
 )
 
 video = cv.VideoCapture(pipeline, cv.CAP_GSTREAMER)
+
+
 if not video.isOpened():
     print("Camera not opened")
      
-lower_pink = np.array([140, 130, 0])   # Lower bound for pink color in HSV
+lower_pink = np.array([140, 100, 0])   # Lower bound for pink color in HSV
 upper_pink = np.array([170, 255, 255])  # Upper bound for pink color in HSV
 
 times = []
@@ -28,10 +45,10 @@ begin = time.time()
 # out_video = cv.VideoWriter('pink_ball2.mp4', cv.VideoWriter_fourcc(*'mp4v'), 60, size)
 
 n = 0
-while True:
-    n += 1
-    if n != 60: continue
-    n = 0
+while time.time()-begin < 10:
+    # n += 1
+    # if n != 60: continue
+    # n = 0
 
     start = time.time()
     ret, frame = video.read()
@@ -61,14 +78,13 @@ while True:
     end = time.time()
     times.append(end - start)
 
-avg = np.mean(times)
-fps = 1 / avg
-print(f"FPS: {fps}")
-
-end = time.time()
-print(f"Video took: {end-begin} s")
-
 video.release()
 # out_video.release()
 cv.destroyAllWindows()
 
+avg = np.mean(times)
+fps = 1 / avg
+print(f"\nFPS: {fps}")
+
+end = time.time()
+print(f"Video took: {end-begin} s")
