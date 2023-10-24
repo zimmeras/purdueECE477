@@ -2,10 +2,13 @@ import math
 
 near_edge_threshold = 0.1
 center_threshold = 0.05
-frame_width = 1280
-frame_height = 720
 sensitivity = 0.5
+frame_width = 1280 # in pixels
+frame_height = 720 # in pixels
 catchable_ball_size = 0.15 * frame_width
+ball_diam_real = 0.0635  # in meters
+camera_fov_deg = 120.0  # in degrees
+sensor_width = 0.00645
 
 file = open("ball_pos_data.txt", 'r')
 
@@ -44,7 +47,7 @@ for line in file:
         last_c, last_r, last_s = c, r, s
         c_values.append(c)
         r_values.append(r)
-        r_values.append(s)
+        s_values.append(s)
 
         # could try some calculating of distance based on r, y, and how big r should be if on ground at that y
         # could wait to catch ball until ball stops or on ground (at least)
@@ -59,38 +62,24 @@ for line in file:
 
 
 
+        # Calculate horizontal and vertical angles based on the camera's FOV
+        alpha = math.radians((c - (frame_width / 2)) / (frame_width / 2) * (camera_fov_deg / 2))
+        beta = math.radians((r - (frame_height / 2)) / (frame_height / 2) * (camera_fov_deg / 2))
+        
+        # Calculate distance to the ball based on the apparent size
+        focal_len = sensor_width / 2 / math.tan(math.radians(camera_fov_deg / 2))
+        focal_len = 0.00275
+        # can also get focal len from when doing camera intrinsics
+        D = ball_diam_real * focal_len / s
+        # but focal_len should be about 1250. will need to measure this when get camera
+        
+        # Calculate x and y coordinates on the ground plane
+        x = D * math.tan(alpha)
+        y = D * math.tan(beta)
+        # i'm pretty sure y should just be D
 
-
-def calculate_ball_position(ball_radius_real, r, c, s, camera_height, camera_fov_deg):
-    # Calculate horizontal and vertical angles based on the camera's FOV
-    alpha = math.radians((c - (frame_width / 2)) / (frame_width / 2) * (camera_fov_deg / 2))
-    beta = math.radians((r - (frame_height / 2)) / (frame_height / 2) * (camera_fov_deg / 2))
-    
-    # Calculate distance to the ball based on the apparent size
-    D = ball_radius_real / math.tan(math.radians(camera_fov_deg / 2)) / s
-
-    # online says this formula for distance
-    # D = FocalLength in mm * (Real object width in mm) / (Virtual object width in px)
-    
-    # Calculate x and y coordinates on the ground plane
-    x = D * math.tan(alpha)
-    y = D * math.tan(beta)
-
-    return x, y
-
-# Example usage
-ball_radius_real = 0.0635  # Size of the ball in meters
-r = 240  # Row
-c = 320  # Column
-s = 40  # Size of the ball in pixels
-camera_height = 0.15  # Height of the camera above the ground in meters
-camera_fov_deg = 120.0  # Camera's FOV in degrees
-
-x, y = calculate_ball_position(ball_radius_real, r, c, s, camera_height, camera_fov_deg)
-print(f"X: {x:.2f} meters, Y: {y:.2f} meters")
-
-
-
+        # Calculate r, might just be alpha, or 90 - alpha
+        r = alpha
 
 
 
