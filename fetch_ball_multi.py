@@ -1,4 +1,5 @@
 import math
+import numpy as np
 
 near_edge_threshold = 0.1
 center_threshold = 0.05
@@ -10,19 +11,24 @@ ball_diam_real = 0.0635  # in meters
 camera_fov_deg = 120.0  # in degrees
 sensor_width = 0.00645
 
-file = open("ball_pos_data.txt", 'r')
+input_file = open("ball_pos_data.txt", 'r')
+output_file = open("out_pos.txt", "w")
 
 c_values = []
 r_values = []
 s_values = []
 
+x_values = []
+y_values = []
+r_values = []
+
 last_c, last_r, last_s = -1, -1, -1
 
 # -1 y means continue with same lateral velocity
-# x and y are in cm's and r is in degrees
+# x and y are in m's and r is in radians
 x, y, r = 0, -1, 0
 
-for line in file:
+for line in input_file:
     values = line.strip().split(', ')
     c, r, s = map(int, values)
     
@@ -49,9 +55,8 @@ for line in file:
         r_values.append(r)
         s_values.append(s)
 
-         # prob make a simple linear function which will say how far to go based on r
+        # prob make a simple linear function which will say how far to go based on r
         # zach wants x,y,r, which means I'm just going to be calculating where the ball is and going there
-
 
 
         # Calculate horizontal and vertical angles based on the camera's FOV
@@ -73,6 +78,17 @@ for line in file:
         # Calculate r, might just be alpha, or 90 - alpha
         r = alpha
 
+        x_values.append(x)
+        y_values.append(y)
+        r_values.append(r)
+        output_file.write(f"{x}, {y}, {r}\n")
+
+avg_x = np.mean(x_values)
+avg_y = np.mean(y_values)
+avg_r = np.mean(r_values)
+
+print(f"Avg X: {avg_x}, Avg Y: {avg_y}, Avg R: {avg_r}")
+
 
 
 # close arms and verify ball has been caught
@@ -84,4 +100,5 @@ for line in file:
     # send data thru UART
 
 
-file.close()
+input_file.close()
+output_file.close()

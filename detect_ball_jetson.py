@@ -22,6 +22,8 @@ upper_pink = np.array([170, 255, 255])  # Upper bound for pink color in HSV
 times = []
 begin = time.time()
 
+file = open("ball_pos_data.txt", 'w')
+
 n = 0
 while time.time()-begin < 5:
     # n += 1
@@ -42,7 +44,10 @@ while time.time()-begin < 5:
     if circles is not None:
         circles = np.uint32(np.around(circles))
         c, r, s = circles[0,0,0], circles[0,0,1], circles[0,0,2]
-        print(f"{c}, {r}, {s}\n")
+        # print(f"{c}, {r}, {s}\n")
+        file.write(f"{c}, {r}, {s}\n")
+    else:
+        file.write(f"-1, -1, -1\n")
 
     end = time.time()
     times.append(end - start)
@@ -54,5 +59,6 @@ print(f"FPS: {fps}")
 end = time.time()
 print(f"Video took: {end-begin} s")
 
+file.close()
 video.release()
 cv.destroyAllWindows()
