@@ -4,7 +4,7 @@ import time
 
 pipeline = (
         "nvarguscamerasrc ! "
-        "video/x-raw(memory:NVMM), width=(int)1280, height=(int)720, format=(string)NV12, framerate=(fraction)60/1 ! "
+        "video/x-raw(memory:NVMM), width=(int)1280, height=(int)720, format=(string)NV12, framerate=(fraction)100/1 ! "
         "nvvidconv flip-method=2 ! "
         "video/x-raw, width=(int)1280, height=(int)720, format=(string)BGRx ! "
         "videoconvert ! "
@@ -22,16 +22,11 @@ upper_pink = np.array([170, 255, 255])  # Upper bound for pink color in HSV
 times = []
 begin = time.time()
 
-# frame_width = int(video.get(3))
-# frame_height = int(video.get(4))
-# size = (frame_width, frame_height)
-# out_video = cv.VideoWriter('pink_ball2.mp4', cv.VideoWriter_fourcc(*'mp4v'), 60, size)
-
 n = 0
-while True:
-    n += 1
-    if n != 60: continue
-    n = 0
+while time.time()-begin < 5:
+    # n += 1
+    # if n != 60: continue
+    # n = 0
 
     start = time.time()
     ret, frame = video.read()
@@ -39,24 +34,15 @@ while True:
 
     frame_hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
     pink_mask = cv.inRange(frame_hsv, lower_pink, upper_pink)
-    # cv.imshow("frame with circle", pink_mask)
-    # cv.waitKey()
 
     blurFrame = cv.GaussianBlur(pink_mask, (17,17), 0)
-
-    # circles = cv.HoughCircles(blurFrame, cv.HOUGH_GRADIENT, 1.4, 5000,
-    #                         param1=100, param2=35, minRadius=0, maxRadius=200)
     circles = cv.HoughCircles(blurFrame, cv.HOUGH_GRADIENT, 1.4, 5000,
                             param1=140, param2=30, minRadius=0, maxRadius=250)
 
     if circles is not None:
         circles = np.uint32(np.around(circles))
-        for i in circles[0,:]:
-            cv.circle(frame, (i[0], i[1]), i[2], (0, 255, 0), 3)
-
-    # out_video.write(frame)
-    cv.imshow("frame with circle", frame)
-    if cv.waitKey(1) & 0xFF == ord('q'): break
+        c, r, s = circles[0,0,0], circles[0,0,1], circles[0,0,2]
+        print(f"{c}, {r}, {s}\n")
 
     end = time.time()
     times.append(end - start)
@@ -69,6 +55,4 @@ end = time.time()
 print(f"Video took: {end-begin} s")
 
 video.release()
-# out_video.release()
 cv.destroyAllWindows()
-

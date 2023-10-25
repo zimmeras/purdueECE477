@@ -49,15 +49,7 @@ for line in file:
         r_values.append(r)
         s_values.append(s)
 
-        # could try some calculating of distance based on r, y, and how big r should be if on ground at that y
-        # could wait to catch ball until ball stops or on ground (at least)
-        # it will be very difficult to determine if ball is not bouncing since robot is moving
-        # might want to write this expecting ball to not be bouncing, at least at first
-        # so then directions will be turn to direction ball is on, and as much as the ball is far from center
-        # wait to catch until ball is in reach which should depend on size and if in center
-        # that's also depending on if our camera can see inside the arms
-
-        # prob make a simple linear function which will say how far to go based on r
+         # prob make a simple linear function which will say how far to go based on r
         # zach wants x,y,r, which means I'm just going to be calculating where the ball is and going there
 
 
