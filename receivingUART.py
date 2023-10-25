@@ -6,6 +6,9 @@ rate = 115200
 ser = serial.Serial(port, rate)
 
 try:
+    dataToSend = "hi"
+    ser.write(dataToSend.encode())
+    
     while True:
         rec = ser.read(100)
         print("received:", rec)

@@ -1,22 +1,23 @@
 import serial
 from time import sleep
 
-ser = serial.Serial("/dev/ttyTHS1", timeout=1)
-ser.buadrate=115200
-#9600
-try:
-    while True:
-        dataToSend = "Hello,Jetson Here !\n"
-        ser.write(dataToSend.encode())
-        sleep(1)
-    
-    
-    #while True:
+ser = serial.Serial(port="/dev/ttyTHS1", baudrate=115200, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE)
+        
 
-     #   recv = ser.read(50)
-      #  if recv:
-      #      print("received data from stm32:", recv.decode(), end="")
-      #      break
+try:
+    
+    dataToSend = bytearray([62, 63, 64, 66, 55, 66, 88, 98])
+    ser.write(dataToSend)
+    print(dataToSend)
+    #data = "hii"
+    #ser.write(data.encode('ascii'))
+        #sleep(1)
+    
+
+        #recv = ser.read(50)
+        #if recv:
+        #    print("received data from stm32:", recv.decode())
+
 except KeyboardInterrupt:
     print("\nExiting Program")
 
