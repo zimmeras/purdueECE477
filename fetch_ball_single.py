@@ -8,21 +8,16 @@ frame_width = 1280 # in pixels
 frame_height = 720 # in pixels
 catchable_ball_size = 0.15 * frame_width
 ball_diam_real = 0.0635  # in meters
-camera_fov_deg = 120.0  # in degrees
+camera_fov_deg = 175.0  # in degrees
 sensor_width = 0.00645
 
-c, r, s = 440, 260, 100
+c, r, s = 542.7405475880053, 370.96088657105605, 20.189048239895698
 
 # Calculate horizontal and vertical angles based on the camera's FOV
 alpha = math.radians((c - (frame_width / 2)) / (frame_width / 2) * (camera_fov_deg / 2))
 
 # Calculate distance to the ball based on the apparent size
-focal_len = 1250
-
-# can also get focal len from when doing camera intrinsics
-D = ball_diam_real * focal_len / s
-# or
-dist_factor = 80
+dist_factor = 17
 D = dist_factor / s
 
 # Calculate x and y coordinates on the ground plane
