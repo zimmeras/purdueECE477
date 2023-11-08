@@ -1,5 +1,4 @@
 import math
-from sshkeyboard import listen_keyboard
 import cv2 as cv
 
 near_edge_threshold = 0.1
@@ -18,18 +17,19 @@ c, r, s = 440, 260, 100
 alpha = math.radians((c - (frame_width / 2)) / (frame_width / 2) * (camera_fov_deg / 2))
 
 # Calculate distance to the ball based on the apparent size
-focal_len = sensor_width / 2 / math.tan(math.radians(camera_fov_deg / 2))
-focal_len = 0.00275
 focal_len = 1250
+
 # can also get focal len from when doing camera intrinsics
 D = ball_diam_real * focal_len / s
-# but focal_len should be about 1250. will need to measure this when get camera
+# or
+dist_factor = 80
+D = dist_factor / s
 
 # Calculate x and y coordinates on the ground plane
 x = D * math.tan(alpha)
 y = D
 
-# Calculate r, might just be alpha, or 90 - alpha
+# Calculate r, might just be alpha, or pi/2 - alpha
 r = alpha
 
 print(f"X: {x}, Y: {y}, R: {r}")
