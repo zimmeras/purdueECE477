@@ -32,9 +32,9 @@ while True:
         break
 
     # undistort and crop
-    frame = cv.undistort(frame, mtx, dist, None, ncm)
-    x, y, w, h = roi
-    frame = frame[y:y+h, x:x+w]
+    # frame = cv.undistort(frame, mtx, dist, None, ncm)
+    # x, y, w, h = roi
+    # frame = frame[y:y+h, x:x+w]
 
     cv.imshow("Camera Feed", frame)
     if cv.waitKey(1) & 0xFF == ord("q"):

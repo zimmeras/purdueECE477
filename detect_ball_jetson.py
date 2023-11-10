@@ -17,7 +17,7 @@ if not video.isOpened():
     print("Camera not opened")
 
 # pink thresholds
-lower_pink = np.array([140, 100, 0])   # Lower bound for pink color in HSV
+lower_pink = np.array([140, 100, 50])   # Lower bound for pink color in HSV
 upper_pink = np.array([170, 255, 255])  # Upper bound for pink color in HSV
 
 # undistorting image specs
@@ -39,15 +39,10 @@ begin = time.time()
 
 # file = open("ball_pos_data.txt", 'w')
 
-n = 0
 while time.time()-begin < 30:
     start = time.time()
     ret, frame = video.read()
     if not ret: break
-
-    # n += 1
-    # if n != 60: continue
-    # n = 0
 
     # undistort and crop
     # frame = cv.undistort(frame, mtx, dist, None, ncm)
@@ -56,25 +51,26 @@ while time.time()-begin < 30:
 
     frame_hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
     pink_mask = cv.inRange(frame_hsv, lower_pink, upper_pink)
+    # cv.imshow("", pink_mask)
 
     blurFrame = cv.GaussianBlur(pink_mask, (17,17), 0)
     circles = cv.HoughCircles(blurFrame, cv.HOUGH_GRADIENT, 1.4, 5000,
-                            param1=140, param2=30, minRadius=0, maxRadius=250)
-    # circles = None
+                            param1=170, param2=20, minRadius=0, maxRadius=100)
+    
     if circles is not None:
         circles = np.uint32(np.around(circles))
         c, r, s = circles[0,0,0], circles[0,0,1], circles[0,0,2]
         cs.append(c)
         rs.append(r)
         ss.append(s)
-        # cv.circle(frame, (circles[0,0,0], circles[0,0,1]), circles[0,0,2], (0, 255, 0), 3)
+        cv.circle(frame, (circles[0,0,0], circles[0,0,1]), circles[0,0,2], (0, 255, 0), 3)
         # print(f"{c}, {r}, {s}\n")
     #     file.write(f"{c}, {r}, {s}\n")
     # else:
     #     file.write(f"-1, -1, -1\n")
 
-    # cv.imshow("frame with circle", frame)
-    # if cv.waitKey(1) & 0xFF == ord('q'): break
+    cv.imshow("frame with circle", frame)
+    if cv.waitKey(1) & 0xFF == ord('q'): break
 
     end = time.time()
     times.append(end - start)

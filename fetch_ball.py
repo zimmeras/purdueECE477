@@ -4,20 +4,19 @@ import numpy as np
 near_edge_threshold = 0.1
 center_threshold = 0.05
 sensitivity = 0.5
+dist_factor = 16.1
 
 frame_width = 1280 # in pixels
 frame_height = 720 # in pixels
-ball_diam_real = 0.0635  # in meters
-camera_fov_deg = 120.0  # in degrees
-sensor_width = 0.00645
+camera_fov_deg = 175.0  # in degrees
 
 frame_width_center = frame_width / 2
 center_width = frame_width * center_threshold
 center_left = frame_width_center - center_width / 2
 center_right = frame_width_center + center_width / 2
 
-catchable_ball_size = 0.15 * frame_width
-catchable_ball_row = 0.85 * frame_height
+catchable_ball_size = 85 # something like this
+catchable_ball_row = 660 # something like this
 
 def isInCenter(c):
     if c > center_left and c < center_right:
@@ -73,6 +72,7 @@ for line in input_file:
         # if didn't see ball on last frame
         if last_c == -1 and last_r == -1 and last_s == -1:
             # wait until see ball
+            # this prob isn't right because ball could easily flicker out two frames in a row
             continue
         else:
             # if last ball pos is near left or right edge then move robot that direction
@@ -96,25 +96,15 @@ for line in input_file:
             # then start return to sender and stop ball detection
             return_to_sender()
     else:
-        # prob make a simple linear function which will say how far to go based on r
-        # zach wants x,y,r, which means I'm just going to be calculating where the ball is and going there
-
-
-        # Calculate horizontal and vertical angles based on the camera's FOV
+        # Calculate horizontal angle based on the camera's FOV
         alpha = math.radians((c - (frame_width / 2)) / (frame_width / 2) * (camera_fov_deg / 2))
-        beta = math.radians((r - (frame_height / 2)) / (frame_height / 2) * (camera_fov_deg / 2))
-        
+
         # Calculate distance to the ball based on the apparent size
-        focal_len = sensor_width / 2 / math.tan(math.radians(camera_fov_deg / 2))
-        focal_len = 0.00275
-        # can also get focal len from when doing camera intrinsics
-        D = ball_diam_real * focal_len / s
-        # but focal_len should be about 1250. will need to measure this when get camera
-        
+        D = dist_factor / s
+
         # Calculate x and y coordinates on the ground plane
         x = D * math.tan(alpha)
-        y = D * math.tan(beta)
-        # i'm pretty sure y should just be D
+        y = D
 
         # Calculate r, might just be alpha, or pi/2 - alpha
         r = alpha
