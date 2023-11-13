@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import math
 import numpy as np
 
@@ -46,7 +47,6 @@ c_values = []
 r_values = []
 s_values = []
 
-x_values = []
 y_values = []
 r_values = []
 
@@ -56,7 +56,7 @@ frames_caught = 0
 
 # -1 y means continue with same lateral velocity
 # x and y are in m's and r is in radians
-x, y, r = 0, -1, 0
+y, r = -1, 0
 
 for line in input_file:
     values = line.strip().split(', ')
@@ -84,10 +84,7 @@ for line in input_file:
                 r = sensitivity * camera_fov_deg
             else:
                 # rotate towards last seen location of ball
-                if x_values[-1] > frame_width_center:
-                    r = math.pi / 2
-                else:
-                    r = -1 * math.pi / 2
+                r = last_r
     elif isCatchable(c, r, s):
         # close arms and verify ball has been caught
         close_arms()
@@ -97,29 +94,15 @@ for line in input_file:
             return_to_sender()
     else:
         # Calculate horizontal angle based on the camera's FOV
-        alpha = math.radians((c - (frame_width / 2)) / (frame_width / 2) * (camera_fov_deg / 2))
+        r = math.radians((c - (frame_width / 2)) / (frame_width / 2) * (camera_fov_deg / 2))
 
         # Calculate distance to the ball based on the apparent size
-        D = dist_factor / s
+        y = dist_factor / s
 
-        # Calculate x and y coordinates on the ground plane
-        x = D * math.tan(alpha)
-        y = D
-
-        # Calculate r, might just be alpha, or pi/2 - alpha
-        r = alpha
-
-    x_values.append(x)
     y_values.append(y)
     r_values.append(r)
-    output_file.write(f"{x}, {y}, {r}\n")
-    send_uart(x)
-
-avg_x = np.mean(x_values)
-avg_y = np.mean(y_values)
-avg_r = np.mean(r_values)
-
-print(f"Avg X: {avg_x}, Avg Y: {avg_y}, Avg R: {avg_r}")
+    output_file.write(f"{y}, {r}\n")
+    send_uart(y, r)
 
 
 
