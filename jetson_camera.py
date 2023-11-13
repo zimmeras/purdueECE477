@@ -9,7 +9,7 @@ pipeline = (
         "video/x-raw, width=(int)1280, height=(int)720, format=(string)BGRx ! "
         "videoconvert ! "
         "video/x-raw, format=(string)BGR ! "
-        "appsink"
+        "appsink sync=false"
 )
 
 # undistorting image specs
